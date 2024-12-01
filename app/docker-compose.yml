@@ -1,0 +1,55 @@
+services:
+
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    environment:
+      - UUID=app-1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/hostname || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    command: "npm start"
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./.env
+    environment:
+      - UUID=app-2
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/hostname || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    command: "npm start"
+
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
+    env_file:
+      - ./.env
+    environment:
+      - UUID=app-3
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/hostname || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    command: "npm start"

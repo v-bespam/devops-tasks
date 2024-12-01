@@ -1,0 +1,40 @@
+---
+- name: Configure Debian Server
+  hosts: debian
+  become: yes
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Create a new user
+      user:
+        name: "{{ new_user }}"
+        password: "{{ new_user_password }}"
+        groups: sudo
+        state: present
+        shell: /bin/bash
+
+    - name: Ensure SSH key-based authentication is enabled
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+        state: present
+        create: yes
+
+    - name: Disable root login via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+
+    - name: Copy the provided public key for 'brickdev'
+      authorized_key:
+        user: "{{ new_user }}"
+        state: present
+        key: "{{ ssh_key }}"
+
+    - name: Restart SSH service to apply changes
+      service:
+        name: ssh
+        state: restarted
